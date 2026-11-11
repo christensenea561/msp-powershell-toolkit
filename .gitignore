@@ -1,0 +1,9 @@
+# Script output is written outside the repo (C:\Users\Public\Documents\MspToolkit), but guard anyway
+*.csv
+*.log
+Output/
+# Local secrets / per-tenant config never belongs in this repo
+*.local.ps1
+*.secrets.*
+.env
+.vscode/

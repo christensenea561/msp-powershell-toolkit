@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax and PS 5.1 compatibility (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/Test-ToolkitSyntax.ps1 -CI
+
+      - name: PSScriptAnalyzer
+        shell: powershell
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+          $r = Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+          $r | Format-Table ScriptName, Line, RuleName, Message -AutoSize -Wrap
+          if ($r) { throw "$($r.Count) analyzer finding(s)" }
